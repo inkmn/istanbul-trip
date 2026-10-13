@@ -8,7 +8,7 @@ const CAT={see:["🏛️","Үзмэр"],mosque:["🕌","Сүм"],museum:["🖼�
 const CATCOL={see:"#c8962e",mosque:"#1f7a8c",museum:"#6a4c93",market:"#b23a48",food:"#e07a2f",cafe:"#8a5a2b",hammam:"#2e7d5b",show:"#8e3b8e",transport:"#0f2a44",area:"#3a7ca5"};
 const WX={rain:"🌧️",heavy:"⛈️",light:"🌦️",good:"🌤️"};
 const gm=q=>`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
-const dirs=(lat,lng,mode)=>`https://www.google.com/maps/dir/?api=1&origin=${TRIP.hotel.lat},${TRIP.hotel.lng}&destination=${lat},${lng}&travelmode=${mode||'walking'}`;
+const dirs=(lat,lng,mode,reg)=>{ const o=reg==='capp'?[38.6225,34.8690]:[TRIP.hotel.lat,TRIP.hotel.lng]; return `https://www.google.com/maps/dir/?api=1&origin=${o[0]},${o[1]}&destination=${lat},${lng}&travelmode=${mode||'walking'}`; };
 const dirsTransit=(lat,lng)=>`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}&travelmode=transit`;
 let fx={...TRIP.fx}, cur=localStorage.getItem('cur')||'try';
 const money=t=>{ if(cur==='eur') return (t/fx.eur_try).toFixed(0)+' €'; if(cur==='mnt') return Math.round(t*fx.try_mnt/1000)+'k ₮'; return t.toLocaleString('en')+' ₺'; };
@@ -34,11 +34,11 @@ function openPlace(id){
   const days=DAYS.filter(d=>d.slots.some(s=>s.place===id||(s.places||[]).includes(id))).map(d=>`<span class="pill">${d.dow} ${d.date.slice(5).replace('-','.')}</span>`).join('');
   $('#sheet').innerHTML=`<div class="grab"></div><button class="close" id="shClose">✕</button>
   <div class="pic"><img src="${IMG(p.img)}" alt="${esc(p.name)}" data-lb="${p.img}"><span class="cat">${c[0]} ${c[1]}</span></div>
-  <div class="body"><h2>${esc(p.name)}</h2><div class="tr">${esc(p.tr)} ${days}</div>
+  <div class="body"><h2>${esc(p.name)}</h2><div class="tr">${esc(p.tr)} ${p.reg==='capp'?'<span class="pill gold">🎈 Каппадоки</span>':''}${days||'<span class="pill">хувилбар</span>'}</div>
   <div class="kv"><b>Цаг</b><span>${esc(p.hours)}</span>${p.closed?`<b>Хаалттай</b><span style="color:var(--red)">${esc(p.closed)}</span>`:''}<b>Үнэ</b><span>${esc(p.price)}</span></div>
   <p>${p.desc}</p>
   ${p.tips&&p.tips.length?`<h3 style="font-size:15px;margin-top:10px">💡 Зөвлөгөө</h3><ul>${p.tips.map(t=>`<li>${t}</li>`).join('')}</ul>`:''}
-  <div class="btns"><a class="btn" href="${dirs(p.lat,p.lng,'walking')}" target="_blank" rel="noopener">🚶 Буудлаас зам</a><a class="btn alt" href="${dirsTransit(p.lat,p.lng)}" target="_blank" rel="noopener">🚋 Нийтийн тээвэр</a></div>
+  <div class="btns"><a class="btn" href="${dirs(p.lat,p.lng,p.reg==='capp'?'driving':'walking',p.reg)}" target="_blank" rel="noopener">${p.reg==='capp'?'🚐 Агуйн буудлаас':'🚶 Буудлаас зам'}</a><a class="btn alt" href="${dirsTransit(p.lat,p.lng)}" target="_blank" rel="noopener">🚋 Нийтийн тээвэр</a></div>
   <div class="btns"><a class="btn ghost" href="${gm(p.q||p.name)}" target="_blank" rel="noopener">📍 Google Maps</a>${p.site?`<a class="btn ghost" href="${p.site}" target="_blank" rel="noopener">🌐 Вэб хуудас</a>`:''}<button class="btn ghost" data-mapgo="${id}">🗺️ Зураг дээр</button></div>
   <div class="sub" style="font-size:12px;margin-top:6px">Зураг: Wikimedia Commons, ${esc(CREDITS[p.img]||'')}</div></div>`;
   $('#sheet').scrollTop=0; $('#sheet').classList.add('on'); $('#sheetBg').classList.add('on');
@@ -79,16 +79,17 @@ function renderHome(){
     todayHtml=`<div class="card"><h2>Аялал ${new Date()<new Date('2026-10-13')?'эхлээгүй':'дууссан'}</h2><div class="sub">Истанбулын цаг: ${now.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})}</div></div>`;
   }
   $('#c-home').innerHTML=`
-  <div class="hero"><img src="${IMG('bosphorus')}" alt="Босфор" data-lb="bosphorus"><div class="cap"><h2>Истанбул, 8 эмэгтэйн аялал</h2><p>2026.10.13 (Мя) – 10.19 (Да) · Күчүк Аясофья буудал</p></div></div>
+  <div class="hero"><img src="${IMG('bosphorus')}" alt="Босфор" data-lb="bosphorus"><div class="cap"><h2>Истанбул + Каппадоки, 8 эмэгтэй</h2><p>2026.10.13 (Мя) – 10.19 (Да) · Пү–Бя Ортахисар, агаарын бөмбөлөг</p></div></div>
   <div class="count"><div><b>${dd}</b><span>хоног</span></div><div><b>${hh}</b><span>цаг</span></div><div><b>${mm}</b><span>мин</span></div><div style="background:var(--teal)"><b>✈️</b><span>TK236 Да 18:30</span></div></div>
   ${todayHtml}
   <div class="card"><h2>🌦️ Цаг агаар, 7 хоног <span class="sub" id="wxSrc" style="font-weight:400;font-size:12px">(урьдчилсан, 10.13)</span></h2><div class="wx" id="wx">${wxGrid(TRIP.weatherStatic,today)}</div>
-    <div class="warn" style="margin-top:10px">Лх, Пү хүчтэй бороо, салхи 33–35 км/ц: шүхэр биш, бүрээстэй куртка. Дотор үзмэрүүд (Цөөрөм, Топкапы, музей, хамам) тэр өдрүүдэд.</div></div>
+    <div class="sub" style="font-size:12px;margin-top:6px">Шар дэвсгэр = Ортахисар (Каппадоки). <span id="dawn">Бөмбөлгийн үүрийн салхи (06–08): Ба 4 км/ц, Бя 10–13 км/ц (20+ бол цуцалдаг).</span></div>
+    <div class="warn" style="margin-top:10px">Истанбулд Лх, Пү хүчтэй бороо, салхи 33–35 км/ц: шүхэр биш, бүрээстэй куртка. Каппадокид Баасан бороо 11%, долоо хоногийн хамгийн сайн өдөр.</div></div>
   <div class="card"><h2>💱 Ханш <span class="sub" id="fxSrc" style="font-weight:400;font-size:12px">(10.13)</span></h2>
     <div class="stats"><div class="stat"><b id="fx1">${fx.try_mnt}</b><span>₮ / 1 ₺</span></div><div class="stat"><b id="fx2">${fx.eur_try}</b><span>₺ / 1 €</span></div><div class="stat"><b id="fx3">${fx.usd_try}</b><span>₺ / 1 $</span></div></div>
     <div class="sub" style="margin-top:8px">Валют: Их зах, Хипподромын döviz цэгүүд (банкнаас сайн, комиссгүй). Картаар төлөхөд ₺-өөр (TRY) сонго, 'DCC' биш.</div></div>
-  <div class="card"><h2>📊 Товч</h2><div class="stats"><div class="stat"><b>7</b><span>өдөр</span></div><div class="stat"><b>${PLACES.length}</b><span>газар</span></div><div class="stat"><b>≈38.5k ₺</b><span>хүнд (≈2.8M ₮)</span></div></div>
-    <div class="sub" style="margin-top:8px">Дундаж олон улсын жуулчны зарцуулалт ≈ 100–130 €/өдөр, буудлаас гадуур. Хэмнэлттэй хувилбар ≈ 23,000 ₺. Тооцоолуур: Бусад → Төсөв.</div></div>
+  <div class="card"><h2>📊 Товч</h2><div class="stats"><div class="stat"><b>4 + 2</b><span>Истанбул + Каппадоки</span></div><div class="stat"><b>${PLACES.length}</b><span>газар</span></div><div class="stat"><b>≈75k ₺</b><span>хүнд (≈ 1,320 € ≈ 5.5M ₮)</span></div></div>
+    <div class="sub" style="margin-top:8px">Истанбулын 4 өдөр олон улсын жуулчны дундаж (100–130 €/өдөр, байргүй) + Каппадокийн 2 шөнө: нислэг, агуйн буудал, бөмбөлөг, ван. Бөмбөлөг ганцаараа нийт зардлын 1/6. Хэмнэлттэй ≈ 59,000 ₺. Тооцоолуур: Бусад → Төсөв.</div></div>
   <div class="card"><h2>⚡ Хурдан</h2><div class="btns">
     <a class="btn" href="${gm('Yusuf Aşkın Sokak 16 Küçük Ayasofya Fatih')}" target="_blank" rel="noopener">🏨 Буудал руу</a>
     <a class="btn alt" href="https://www.bitaksi.com/" target="_blank" rel="noopener">🚕 BiTaksi</a></div>
@@ -98,11 +99,16 @@ function renderHome(){
   <div class="foot">Зургууд: Wikimedia Commons (CC). Үнэ, цаг 2026.10.13-ны байдлаар, өөрчлөгдөж болно.</div>`;
   $$('#c-home [data-day]').forEach(e=>e.onclick=()=>{ show('days'); renderDay(e.dataset.day); });
 }
-function wxGrid(arr,today){ return arr.map(w=>{ const d=new Date(w.d+'T12:00:00'); return `<div class="${w.d===today?'today':''}"><div class="d">${DOW[d.getDay()]} ${d.getDate()}</div><div class="i">${wxIcon(w)}</div><div class="t">${w.hi}°<span style="color:var(--mute)">/${w.lo}°</span></div><div class="p">${w.p}% ${w.mm}мм</div><div class="p">💨${w.wind}</div></div>`; }).join(''); }
+function wxGrid(arr,today){ return arr.map(w=>{ const d=new Date(w.d+'T12:00:00'); return `<div class="${w.d===today?'today':''}" style="${w.loc?'background:#fbf1dc':''}"><div class="d">${DOW[d.getDay()]} ${d.getDate()}</div><div class="i">${wxIcon(w)}</div><div class="t">${w.hi}°<span style="color:var(--mute)">/${w.lo}°</span></div><div class="p">${w.p}% ${w.mm}мм</div><div class="p">💨${w.wind}</div></div>`; }).join(''); }
 async function liveWeather(){
-  try{ const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.0082&longitude=28.9784&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=Europe%2FIstanbul&start_date=2026-10-13&end_date=2026-10-19'); const j=await r.json();
-    const arr=j.daily.time.map((t,i)=>({d:t,hi:Math.round(j.daily.temperature_2m_max[i]),lo:Math.round(j.daily.temperature_2m_min[i]),p:j.daily.precipitation_probability_max[i]??0,mm:Math.round(j.daily.precipitation_sum[i]),wind:Math.round(j.daily.wind_speed_10m_max[i])}));
-    if(arr.length&&$('#wx')){ $('#wx').innerHTML=wxGrid(arr,istDate()); $('#wxSrc').textContent='(шууд, Open-Meteo)'; }
+  try{
+    const u=(la,lo,h)=>`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max${h?'&hourly=wind_speed_10m':''}&timezone=Europe%2FIstanbul&start_date=2026-10-13&end_date=2026-10-19`;
+    const [ji,jo]=await Promise.all([fetch(u(41.0082,28.9784)).then(r=>r.json()),fetch(u(38.623,34.865,1)).then(r=>r.json())]);
+    const mk=(j,i,loc)=>({d:j.daily.time[i],hi:Math.round(j.daily.temperature_2m_max[i]),lo:Math.round(j.daily.temperature_2m_min[i]),p:j.daily.precipitation_probability_max[i]??0,mm:Math.round(j.daily.precipitation_sum[i]),wind:Math.round(j.daily.wind_speed_10m_max[i]),loc});
+    const arr=ji.daily.time.map((t,i)=> (t==='2026-10-16'||t==='2026-10-17') ? mk(jo,i,'Ортахисар') : mk(ji,i));
+    if(arr.length&&$('#wx')){ $('#wx').innerHTML=wxGrid(arr,istDate()); $('#wxSrc').textContent='(шууд, Open-Meteo)'; TRIP.weatherLive=arr; }
+    if(jo.hourly&&$('#dawn')){ const dawn=d=>{ const v=jo.hourly.time.map((t,i)=>[t,jo.hourly.wind_speed_10m[i]]).filter(x=>x[0].startsWith(d)&&+x[0].slice(11,13)>=5&&+x[0].slice(11,13)<=8).map(x=>x[1]); return v.length?Math.round(Math.max(...v)):null; };
+      const f=dawn('2026-10-16'), sa=dawn('2026-10-17'); if(f!==null) $('#dawn').textContent=`Бөмбөлгийн үүрийн салхи (05–08, шууд): Ба ${f} км/ц, Бя ${sa} км/ц (20+ бол цуцалдаг).`; }
   }catch(e){}
 }
 async function liveFx(){
@@ -117,12 +123,12 @@ function renderDay(id){
   curDay=id; const d=DAYS.find(x=>x.id===id); const today=istDate()===d.date; const now=istNow(); const nowMin=now.getHours()*60+now.getMinutes();
   $$('#dayChips .chip').forEach(b=>b.classList.toggle('on',b.dataset.d===id));
   const chip=$(`#dayChips .chip[data-d="${id}"]`); chip&&chip.scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'});
-  const w=TRIP.weatherStatic.find(x=>x.d===d.date); const pr=TRIP.prayer.find(x=>x.d===d.date);
+  const w=(TRIP.weatherLive||TRIP.weatherStatic).find(x=>x.d===d.date)||TRIP.weatherStatic.find(x=>x.d===d.date); const pr=TRIP.prayer.find(x=>x.d===d.date);
   let curIdx=-1; if(today) d.slots.forEach((s,i)=>{const [h,m]=s.t.split(':').map(Number); if(h*60+m<=nowMin) curIdx=i;});
   const i=DAYS.indexOf(d);
   $('#c-day').innerHTML=`
   <div class="hero" style="aspect-ratio:16/9"><img src="${IMG(d.img)}" alt="" data-lb="${d.img}"><div class="cap"><h2>${d.dow}, ${d.date.slice(5).replace('-','.')}</h2><p>${esc(d.title)}</p></div></div>
-  <div style="display:flex;flex-wrap:wrap;gap:4px;margin:0 0 6px">${w?`<span class="pill">${wxIcon(w)} ${w.hi}°/${w.lo}° · ${w.p}% · ${w.mm} мм</span>`:''}<span class="pill gold">💰 ${esc(d.total)}</span>${pr?`<span class="pill">🕌 ${pr.o} · ${pr.i} · ${pr.a}</span>`:''}</div>
+  <div style="display:flex;flex-wrap:wrap;gap:4px;margin:0 0 6px">${d.loc?`<span class="pill gold">📍 ${d.loc}</span>`:''}${w?`<span class="pill">${wxIcon(w)} ${w.hi}°/${w.lo}° · ${w.p}% · ${w.mm} мм${w.dawn?' · '+w.dawn:''}</span>`:''}<span class="pill gold">💰 ${esc(d.total)}</span>${pr?`<span class="pill">🕌 ${pr.o} · ${pr.i} · ${pr.a}</span>`:''}</div>
   ${pr&&pr.note?`<div class="warn">${pr.note}</div>`:''}
   <div class="card">${d.slots.map((s,k)=>`<div class="slot ${k===curIdx?'now-slot':''}"><div class="tm ${k===curIdx?'now':''}">${s.t}</div><div>
       <div class="tt">${esc(s.title)}${s.cost?`<span class="cost">${esc(s.cost)}</span>`:''}</div>
@@ -139,11 +145,11 @@ function renderDay(id){
 
 /* ---------- PLACES ---------- */
 let catF='all';
-function renderCatChips(){ const cats=['all',...Object.keys(CAT)]; $('#catChips').innerHTML=cats.map(c=>`<button class="chip ${c===catF?'on':''}" data-c="${c}">${c==='all'?'Бүгд':CAT[c][0]+' '+CAT[c][1]}</button>`).join(''); $$('#catChips .chip').forEach(b=>b.onclick=()=>{catF=b.dataset.c; renderCatChips(); renderPlaces();}); }
+function renderCatChips(){ const cats=['all','capp',...Object.keys(CAT)]; $('#catChips').innerHTML=cats.map(c=>`<button class="chip ${c===catF?'on':''}" data-c="${c}">${c==='all'?'Бүгд':c==='capp'?'🎈 Каппадоки':CAT[c][0]+' '+CAT[c][1]}</button>`).join(''); $$('#catChips .chip').forEach(b=>b.onclick=()=>{catF=b.dataset.c; renderCatChips(); renderPlaces();}); }
 function renderPlaces(){
   const q=($('#q').value||'').toLowerCase();
-  const list=PLACES.filter(p=>(catF==='all'||p.cat===catF)&&(!q||(p.name+' '+p.tr+' '+p.desc).toLowerCase().includes(q)));
-  $('#c-places').innerHTML=list.map(p=>`<div class="tile" data-place="${p.id}"><img src="${IMG(p.img)}" alt="" loading="lazy"><span class="b">${CAT[p.cat][0]} ${CAT[p.cat][1]}</span><div class="t">${esc(p.name)}<small>${esc(p.price)}</small></div></div>`).join('')||'<div class="sub">Олдсонгүй</div>';
+  const list=PLACES.filter(p=>(catF==='all'||(catF==='capp'?p.reg==='capp':p.cat===catF))&&(!q||(p.name+' '+p.tr+' '+p.desc).toLowerCase().includes(q)));
+  $('#c-places').innerHTML=list.map(p=>`<div class="tile" data-place="${p.id}"><img src="${IMG(p.img)}" alt="" loading="lazy"><span class="b">${p.reg==='capp'?'🎈 ':''}${CAT[p.cat][0]} ${CAT[p.cat][1]}</span><div class="t">${esc(p.name)}<small>${esc(p.price)}</small></div></div>`).join('')||'<div class="sub">Олдсонгүй</div>';
 }
 $('#q').oninput=renderPlaces;
 
@@ -160,7 +166,7 @@ function initMap(){
   L.marker([TRIP.hotel.lat,TRIP.hotel.lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#b23a48;width:36px;height:36px"><span>🏨</span></div>',iconSize:[36,36],iconAnchor:[18,36]}),zIndexOffset:1000}).addTo(map).bindPopup('<b>Буудал</b><br>Yusuf Aşkın Sk. 16');
   const Me=L.Control.extend({onAdd(){ const b=L.DomUtil.create('button'); b.innerHTML='⌖'; b.style.cssText='width:34px;height:34px;font-size:20px;background:#fff;border:2px solid rgba(0,0,0,.2);border-radius:4px;cursor:pointer'; b.onclick=()=>navigator.geolocation&&navigator.geolocation.getCurrentPosition(pos=>{ const ll=[pos.coords.latitude,pos.coords.longitude]; if(meMarker) meMarker.setLatLng(ll); else meMarker=L.circleMarker(ll,{radius:9,color:'#fff',weight:3,fillColor:'#1a73e8',fillOpacity:1}).addTo(map).bindPopup('Та энд'); map.setView(ll,15); },()=>alert('Байршил авах боломжгүй')); return b; }});
   new Me({position:'topright'}).addTo(map);
-  $('#mapChips').innerHTML=`<button class="chip on" data-md="all">Бүгд</button>`+DAYS.map(d=>`<button class="chip" data-md="${d.id}">${d.dow} ${d.date.slice(8)}</button>`).join('');
+  $('#mapChips').innerHTML=`<button class="chip on" data-md="all">Истанбул</button><button class="chip" data-md="capp">🎈 Каппадоки</button>`+DAYS.map(d=>`<button class="chip" data-md="${d.id}">${d.dow} ${d.date.slice(8)}</button>`).join('');
   $$('#mapChips .chip').forEach(b=>b.onclick=()=>setMapDay(b.dataset.md));
   setTimeout(()=>{map.invalidateSize(); setMapDay('all');},100);
 }
@@ -168,19 +174,20 @@ function setMapDay(id){
   if(!map) initMap();
   $$('#mapChips .chip').forEach(b=>b.classList.toggle('on',b.dataset.md===id));
   if(dayLine){ map.removeLayer(dayLine); dayLine=null; }
-  if(id==='all'){ Object.values(markers).forEach(m=>m.addTo(map)); map.fitBounds(L.latLngBounds(PLACES.filter(p=>!['airport','buyukada'].includes(p.id)).map(p=>[p.lat,p.lng])),{padding:[20,20]}); return; }
+  if(id==='all'||id==='capp'){ const sel=PLACES.filter(p=>id==='capp'?p.reg==='capp':(p.reg!=='capp'&&!['airport','buyukada'].includes(p.id))); Object.entries(markers).forEach(([k,m])=>{ if(id==='all'?P[k].reg!=='capp':P[k].reg==='capp') m.addTo(map); else map.removeLayer(m); }); map.fitBounds(L.latLngBounds(sel.map(p=>[p.lat,p.lng])),{padding:[20,20]}); return; }
   const d=DAYS.find(x=>x.id===id); const ids=dayPlaceIds(d);
   Object.entries(markers).forEach(([k,m])=>{ if(ids.includes(k)) m.addTo(map); else map.removeLayer(m); });
-  const pts=[[TRIP.hotel.lat,TRIP.hotel.lng],...ids.filter(k=>k!=='airport'&&k!=='hotel').map(k=>[P[k].lat,P[k].lng])];
+  const capp=ids.some(k=>P[k].reg==='capp'); const pts=capp? ids.filter(k=>P[k].reg==='capp'&&k!=='nav').map(k=>[P[k].lat,P[k].lng]) : [[TRIP.hotel.lat,TRIP.hotel.lng],...ids.filter(k=>k!=='airport'&&k!=='hotel'&&k!=='nav').map(k=>[P[k].lat,P[k].lng])];
   if(pts.length>1){ dayLine=L.polyline(pts,{color:'#1f7a8c',weight:3,dashArray:'6 6',opacity:.8}).addTo(map); map.fitBounds(dayLine.getBounds(),{padding:[30,30]}); }
 }
 
 /* ---------- MORE ---------- */
 const BUDGET=[
-  ["Тасалбар",[["Ая София (галерей)",1270,1],["Цөөрөм",1950,1],["Топкапы + Харем",2750,1],["Археологийн музей",760,1],["Хора сүм (хувилбар)",1150,0],["Галата цамхаг",1520,1],["Дервишийн сема",1600,1],["Босфорын тойрог",340,1],["Долмабахче",2650,1],["Cağaloğlu хамам",3500,1],["Охидын цамхаг (борооны хувилбар)",1620,0]]],
-  ["Хоол",[["Мя: Balıkçı Sabahattin",1400,1],["Лх: Köftecisi + Matbah",1300,1],["Пү: Konyalı + Hamdi",1600,1],["Ба: Pandeli + Karaköy Lokantası",1800,1],["Бя: Çiya + kumpir + Neolokal",4950,1],["Ня: Milto + Asmalı Cavit",2200,1],["Да: өглөөний цай, хөнгөн хоол",500,1],["Өглөөний цай, зууш, цай/кофе ×7",2800,1]]],
-  ["Тээвэр",[["Havaist IST→Aksaray (ирэх)",310,1],["Истанбулкарт ×7 өдөр",1100,1],["Гатлага онгоц: Кадыкөй, Бешикташ, Арлууд",550,1],["Такси хуваах (орой, бороо)",600,1],["Ван буудал→IST (хүнд)",440,1]]],
-  ["Бусад",[["Бэлэг, lokum, баклава",2500,1],["Худалдаа (хувцас, керамик, …)",5000,0],["Нөөц (10%)",2500,1]]]
+  ["Истанбулын тасалбар",[["Ая София (галерей)",1270,1],["Цөөрөм",1950,1],["Топкапы + Харем",2750,1],["Долмабахче",2650,1],["Cağaloğlu хамам",3500,1],["Дервишийн сема",1600,1],["Босфорын тойрог",340,1],["Галата цамхаг (Ня орой, хүсвэл)",1520,0],["Хора сүм (Лх, хүсвэл)",1400,0],["Hürrem Sultan тансаг хамам (оронд нь)",3000,0]]],
+  ["Каппадоки",[["Нислэг TK IST→NAV→IST",9500,1],["Агуйн буудал 2 шөнө (2 хүний өрөө хуваалт)",8500,1],["Агаарын бөмбөлөг, стандарт 60 мин",12500,1],["Дээд зэргийн бөмбөлөг нэмэлт (Royal/Butterfly)",6000,0],["Хувийн ван + хөтөч Ба (8-д хуваалт)",3200,1],["Гөреме музей + Karanlık Kilise",1480,1],["Цайз, музей, Панжарлык",350,1],["NAV нисэх буудлын ван ×2",800,1],["Нар жаргах жийп сафари (хүсвэл)",2000,0]]],
+  ["Хоол",[["Мя: Balıkçı Sabahattin",1400,1],["Лх: Köftecisi + Neolokal",4300,1],["Пү: Konyalı + Tandır",1300,1],["Ба: Аванос + Ziggy's",1700,1],["Бя: Ортахисар + Matbah",1500,1],["Ня: kumpir + Hamdi",1450,1],["Да: өглөөний цай, хөнгөн хоол",500,1],["Өглөөний цай, зууш, цай/кофе, ус",2500,1]]],
+  ["Тээвэр",[["Havaist IST→Aksaray (ирэх)",310,1],["Истанбулкарт (трам, автобус, онгоц ≈ 18 уншилт)",1000,1],["IST такси Пү + Бя (хуваалт)",650,1],["Такси хуваах (орой, бороо)",600,1],["Ван буудал→IST Да (хүнд)",440,1]]],
+  ["Бусад",[["Бэлэг, lokum, баклава",2500,1],["Худалдаа (хувцас, керамик, …)",5000,0],["Нөөц ≈ 6%",4500,1]]]
 ];
 function renderMore(){
   const b=k=>{ const s=localStorage.getItem('b_'+k); return s===null?null:s==='1'; };
@@ -222,6 +229,7 @@ function transportHtml(){ return `
 <h3>🚌 Автобус (İETT)</h3><p>Eminönü → Balat: <b>99, 99A, 36CE</b> (Yeni Cami-гийн хажуугийн буудал). Beşiktaş → Ortaköy → Kabataş: <b>22, 25E, 40, 40T</b>. Урдаас сууж картаар хүрнэ.</p>
 <h3>🚕 Такси</h3><p>Тоолуур: суух 35 ₺ + 23.6 ₺/км, хамгийн бага 100 ₺. 8 хүн = 2 такси. <b>BiTaksi</b> апп (картаар төлнө, маргаангүй). Султанахметын орчмын тоолуургүй таксиас татгалз: "Taksimetre, lütfen". Жишээ: буудал → Каракөй 150 ₺, → Хамам 100 ₺, → Chora 250 ₺, → Ortaköy 300 ₺.</p>
 <h3>✈️ Нисэх буудал</h3><p><b>Havaist HVL-1</b> IST ↔ Aksaray, 20–30 мин тутам, 265–355 ₺, карт/Истанбулкарт (бэлэн мөнгө авахгүй), -2 давхар. 70–90 мин. Sultanahmet чиглэлийн Havaist зогссон. <b>Ван</b> 8 хүн + ачаа ≈ 3,500 ₺, 60–75 мин, буудлын хаалганаас. Такси ≈ 1,800 ₺ нэг машин (4 хүн).</p>
+<h3>🎈 Каппадоки</h3><p><b>Нислэг</b> Turkish Airlines Пү TK2086 IST 16:10 → NAV 17:30; Бя TK2007 NAV 15:55 → IST 17:25 (нэг тал ≈ 4,000–5,500 ₺). Хямд: AJet Sabiha Gökçen (SAW) ≈ 2,200–3,200 ₺, гэхдээ SAW хүртэл 1.5 цаг. <b>NAV → Ортахисар</b> 40 км, 40 мин: буудлын ван 8 хүн ≈ 3,000–3,500 ₺, хамтарсан шаттл ≈ 600 ₺/хүн, такси 2 машин ≈ 2,000 ₺. Ортахисар ↔ Гөреме, Үргүп такси 300–400 ₺. Хотын автобус цөөн тул ван.</p>
 <h3>🚶 Алхах зай буудлаас</h3><p>Хөх сүм 7 мин · Ая София 11 мин · Трам 10 мин · Цөөрөм 12 мин · Топкапы хаалга 15 мин · Их зах 18 мин · Эминөнү 25 мин (эсвэл трам 3 буудал). Гудамж эгц, чулуун: тав тухтай гутал.</p>`; }
 function safetyHtml(){ return `
 <div class="btns"><a class="btn red" href="tel:112">🚨 112 (яаралтай, бүх төрөл)</a><a class="btn ghost" href="tel:155">👮 155 цагдаа</a></div>
