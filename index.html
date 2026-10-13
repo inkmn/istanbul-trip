@@ -1,4 +1,6 @@
-<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Истанбул 8 хүний аялал</title>
+<!doctype html><html lang="mn"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Истанбул 8 хүний аялал</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;700;800&family=Source+Sans+3:ital,wght@0,400;0,600;1,400&display=swap">
 <style>
 /* Layout: one reading column, sticky day-nav, weather strip + budget grid; Iznik tile palette (lapis, turquoise, sand) */
@@ -111,7 +113,70 @@ figure{margin:0}
 @media (max-width:600px){ .credit{columns:1} .day .hero img{aspect-ratio:2/1} }
 @media print{ .hero img{aspect-ratio:4/1} .pics{grid-template-columns:repeat(4,1fr)} .route{break-inside:avoid} }
 a.lk{color:inherit;text-decoration:none;border-bottom:1.5px solid var(--turq)}a.lk:hover{color:var(--lapis)}a.mp{text-decoration:none;font-size:13px}.lnks{list-style:none;padding:0;font-size:14.5px}.lnks li{margin:4px 0}@media print{a.lk{border-bottom:1px solid #1a8a98}a.mp{display:none}.lnks a{color:#1f3f8f!important}}
-</style>
+
+/* mobile first-class: everyone reads on a phone */
+h2,section,[id]{scroll-margin-top:64px}
+img{max-width:100%;height:auto}
+nav.days a{min-height:40px;display:inline-flex;align-items:center;-webkit-tap-highlight-color:transparent}
+nav.days{scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-inline:2px;margin-inline:-2px}
+nav.days::-webkit-scrollbar{display:none}
+@media (max-width:640px){
+  body{font-size:16px;line-height:1.5}
+  .wrap{padding-block:16px 48px}
+  h1{font-size:30px} h2{font-size:22px;margin-top:38px} h3{font-size:17.5px}
+  .lede{font-size:16.5px}
+  .eyebrow{font-size:11px;letter-spacing:.08em}
+  .hero img{aspect-ratio:16/10}
+  .day .hero img{aspect-ratio:16/9}
+  .facts{grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+  .fact{padding:10px 11px}
+  .fact .v{font-size:18px}
+  .fact .s{font-size:13px}
+  .wx{grid-template-columns:1fr;gap:4px;overflow:visible}
+  .wx .d{display:grid;grid-template-columns:56px 68px 1fr auto;gap:8px;align-items:center;border-top-width:1px;border-left:4px solid var(--line);padding:6px 10px}
+  .wx .d.heavy{border-left-color:var(--rain);border-top-color:var(--line)}
+  .wx .d.light{border-left-color:#8fb4e8;border-top-color:var(--line)}
+  .wx .d.good{border-left-color:var(--ok);border-top-color:var(--line)}
+  .wx .r{font-size:12.5px}
+  .day{padding:12px 13px;margin:14px -4px;border-left-width:4px}
+  .day .hero{margin:-12px -13px 10px}
+  .day header h3{font-size:19px}
+  .slot{grid-template-columns:52px 1fr;gap:8px;margin:12px 0}
+  .slot .tm{font-size:13.5px}
+  .route{padding:7px 10px 7px 8px;font-size:14px;margin:6px 0 2px}
+  .route ol{padding-left:18px}
+  .kv{grid-template-columns:1fr}
+  .pics{grid-template-columns:1fr 1fr;gap:8px}
+  .pic figcaption{font-size:12px}
+  .call{padding:12px 13px}
+  .two{gap:10px}
+  small,.note{font-size:14px}
+  .tbl{overflow:visible}
+  table{min-width:0;font-size:14.5px}
+  .t-tickets tr:first-child,.t-budget tr:first-child{display:none}
+  .t-tickets,.t-tickets tbody,.t-tickets tr,.t-tickets td{display:block;width:100%}
+  .t-tickets tr{background:var(--surface);border:1px solid var(--line);padding:8px 10px;margin:8px 0}
+  .t-tickets td{border:0;padding:2px 0;text-align:left!important;white-space:normal!important}
+  .t-tickets td:first-child{font-weight:700;font-family:var(--display);font-size:15px;padding-bottom:4px}
+  .t-tickets td:not(:first-child)::before{content:attr(data-label) ": ";color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.04em;font-family:var(--display);font-weight:700}
+  .t-budget,.t-budget tbody{display:block;width:100%}
+  .t-budget tr{display:grid;grid-template-columns:1fr auto;gap:0 10px;padding:7px 0;border-bottom:1px solid var(--line)}
+  .t-budget td{border:0;padding:0}
+  .t-budget td:first-child{grid-row:1/3}
+  .t-budget td:nth-child(2){font-weight:700}
+  .t-budget td:nth-child(3){display:none}
+  .t-budget td:nth-child(4){font-size:13px;color:var(--muted)}
+  .t-budget tr.total{border-top:2px solid var(--fg);border-bottom:0;margin-top:4px}
+  .t-prayer{font-size:13.5px}
+  .t-prayer th,.t-prayer td{padding:6px 4px}
+  .t-prayer th:nth-child(2),.t-prayer td:nth-child(2),.t-prayer th:nth-child(6),.t-prayer td:nth-child(6){display:none}
+  .t-prayer th:nth-child(7),.t-prayer td:nth-child(7){font-size:12px}
+  .t-tickets td.n{display:inline-block;width:auto;margin-right:14px}
+  .t-tickets td.n+td:not(.n){margin-top:2px}
+  .credit{columns:1}
+}
+@media (max-width:380px){ .facts{grid-template-columns:1fr} }
+</style></head><body>
 
 <div class="wrap">
 <div class="eyebrow">2026.10.13 (Мя) – 10.19 (Да) · 8 эмэгтэй · буудал Күчүк Аясофья, Фатих · буцах TK236 Да 18:30</div>
@@ -184,32 +249,32 @@ a.lk{color:inherit;text-decoration:none;border-bottom:1.5px solid var(--turq)}a.
 
 <h2 id="hours">Ажиллах цаг, мөргөлийн цаг, тасалбар</h2>
 <p>Сүмүүд (Ая София, Хөх сүм, Сүлеймание, Рүстем Паша) мөргөлийн цагаас <b>30 мин өмнө, 30 мин дараа</b> жуулчин оруулдаггүй. Диянетийн 2026.10 сарын Истанбулын цаг:</p>
-<div class="tbl"><table>
+<div class="tbl"><table class="t-prayer">
 <tr><th>Өдөр</th><th>Өглөө (Güneş)</th><th>Үд (Öğle)</th><th>Үдээс хойш (İkindi)</th><th>Орой (Akşam)</th><th>Шөнө (Yatsı)</th><th>Жуулчны цонх</th></tr>
-<tr><td>Лх 14</td><td>07:07</td><td>12:55</td><td>16:01</td><td>18:33</td><td>19:52</td><td>09:00–12:20, 13:30–15:30, 16:40–18:00</td></tr>
-<tr><td>Пү 15</td><td>07:08</td><td>12:55</td><td>16:00</td><td>18:32</td><td>19:51</td><td>адил</td></tr>
-<tr><td><b>Ба 16</b></td><td>07:09</td><td>12:55 (Баасны мөргөл)</td><td>15:58</td><td>18:30</td><td>19:49</td><td><b>Ая София, Хөх сүм 12:00–14:30 хаалттай</b>; Хора Баасан бүхэлдээ хаалттай</td></tr>
-<tr><td>Бя 17</td><td>07:10</td><td>12:55</td><td>15:57</td><td>18:29</td><td>19:48</td><td>адил</td></tr>
-<tr><td>Ня 18</td><td>07:11</td><td>12:54</td><td>15:56</td><td>18:27</td><td>19:47</td><td>адил</td></tr>
-<tr><td>Да 19</td><td>07:13</td><td>12:54</td><td>15:55</td><td>18:26</td><td>19:45</td><td>адил</td></tr>
+<tr><td data-label="Өдөр">Лх 14</td><td data-label="Өглөө (Güneş)">07:07</td><td data-label="Үд (Öğle)">12:55</td><td data-label="Үдээс хойш (İkindi)">16:01</td><td data-label="Орой (Akşam)">18:33</td><td data-label="Шөнө (Yatsı)">19:52</td><td data-label="Жуулчны цонх">09:00–12:20, 13:30–15:30, 16:40–18:00</td></tr>
+<tr><td data-label="Өдөр">Пү 15</td><td data-label="Өглөө (Güneş)">07:08</td><td data-label="Үд (Öğle)">12:55</td><td data-label="Үдээс хойш (İkindi)">16:00</td><td data-label="Орой (Akşam)">18:32</td><td data-label="Шөнө (Yatsı)">19:51</td><td data-label="Жуулчны цонх">адил</td></tr>
+<tr><td data-label="Өдөр"><b>Ба 16</b></td><td data-label="Өглөө (Güneş)">07:09</td><td data-label="Үд (Öğle)">12:55 (Баасны мөргөл)</td><td data-label="Үдээс хойш (İkindi)">15:58</td><td data-label="Орой (Akşam)">18:30</td><td data-label="Шөнө (Yatsı)">19:49</td><td data-label="Жуулчны цонх"><b>Ая София, Хөх сүм 12:00–14:30 хаалттай</b>; Хора Баасан бүхэлдээ хаалттай</td></tr>
+<tr><td data-label="Өдөр">Бя 17</td><td data-label="Өглөө (Güneş)">07:10</td><td data-label="Үд (Öğle)">12:55</td><td data-label="Үдээс хойш (İkindi)">15:57</td><td data-label="Орой (Akşam)">18:29</td><td data-label="Шөнө (Yatsı)">19:48</td><td data-label="Жуулчны цонх">адил</td></tr>
+<tr><td data-label="Өдөр">Ня 18</td><td data-label="Өглөө (Güneş)">07:11</td><td data-label="Үд (Öğle)">12:54</td><td data-label="Үдээс хойш (İkindi)">15:56</td><td data-label="Орой (Akşam)">18:27</td><td data-label="Шөнө (Yatsı)">19:47</td><td data-label="Жуулчны цонх">адил</td></tr>
+<tr><td data-label="Өдөр">Да 19</td><td data-label="Өглөө (Güneş)">07:13</td><td data-label="Үд (Öğle)">12:54</td><td data-label="Үдээс хойш (İkindi)">15:55</td><td data-label="Орой (Akşam)">18:26</td><td data-label="Шөнө (Yatsı)">19:45</td><td data-label="Жуулчны цонх">адил</td></tr>
 </table></div>
 
-<div class="tbl"><table>
+<div class="tbl"><table class="t-tickets">
 <tr><th>Газар</th><th>Ажиллах цаг (10 сар)</th><th>Хаалттай</th><th class="n">₺</th><th class="n">₮</th><th>Манай өдөр</th></tr>
-<tr><td>Ая София, дээд галерейн жуулчны зам</td><td>09:00–19:30 орчим, сүүлийн тасалбар 1 цагийн өмнө; мөргөлөөр завсарлана</td><td>Ба 12:00–14:30</td><td class="n">1,270</td><td class="n">93,000</td><td>Лх 14, 09:00</td></tr>
-<tr><td>Хөх сүм</td><td>08:30–18:00, мөргөлөөр завсарлана</td><td>Ба 12:00–14:30</td><td class="n">0</td><td class="n">0</td><td>Лх 14, 10:30</td></tr>
-<tr><td>Цөөрөм (Basilica Cistern)</td><td>09:00–19:00 (сүүлийн тасалбар 18:00); 19:30–22:00 "шөнийн" 3,000 ₺</td><td>—</td><td class="n">1,950</td><td class="n">142,000</td><td>Лх 14, 11:30</td></tr>
-<tr><td>Топкапы + Харем + Ая Ирине</td><td>09:00–18:00, сүүлийн тасалбар 17:00, Харем 45 мин эрт хаана</td><td>Мягмар</td><td class="n">2,750</td><td class="n">200,000</td><td>Пү 15, 09:00</td></tr>
-<tr><td>Археологийн музей</td><td>09:00–18:00, тасалбар 17:30 хүртэл; Паалантай павильон засварт</td><td>Даваа</td><td class="n">760</td><td class="n">55,000</td><td>Пү 15, 14:30</td></tr>
-<tr><td>Галата цамхаг</td><td>08:30–23:00 (сүүлийн орох 22:00)</td><td>—</td><td class="n">1,520</td><td class="n">111,000</td><td>Пү 15, 17:15</td></tr>
-<tr><td>Hodjapasha дервишийн сема</td><td>Өдөр бүр 19:00, хаалга 18:30, 60 мин</td><td>—</td><td class="n">≈ 1,400–1,800</td><td class="n">100–130 мян.</td><td>Пү 15, 19:00</td></tr>
-<tr><td>Босфорын богино тойрог, Şehir Hatları</td><td>Эминөнү Boğaz Hattı хөлгөөс 14:30 (хөлөг дээр шалга), 2 цаг</td><td>—</td><td class="n">340</td><td class="n">25,000</td><td>Ба 16, 14:30</td></tr>
-<tr><td>Долмабахче ордон (Selamlık + Harem)</td><td>09:00–17:00, тасалбар 16:00 хүртэл, ихэвчлэн эрт дуусдаг</td><td>Даваа</td><td class="n">2,000–2,650</td><td class="n">146–193 мян.</td><td>Бя 17, 13:45</td></tr>
-<tr><td>Cağaloğlu Hamamı, эмэгтэйчүүдийн хэсэг</td><td>08:00–22:00 (захиалга заавал)</td><td>—</td><td class="n">2,000–4,500</td><td class="n">146–330 мян.</td><td>Лх 14, 18:00</td></tr>
-<tr><td>Их зах</td><td>08:30–19:00</td><td>Ням</td><td class="n">0</td><td class="n">0</td><td>Лх 14, Да 19</td></tr>
-<tr><td>Амтлагчийн зах</td><td>08:00–19:30, Ням 09:30–19:00</td><td>—</td><td class="n">0</td><td class="n">0</td><td>Лх 14, Да 19</td></tr>
-<tr><td>Хора (Kariye) сүм, мозайк</td><td>09:00–18:00, мөргөлөөр завсарлана</td><td><b>Баасан</b></td><td class="n">≈ 1,150 (20 €)</td><td class="n">84,000</td><td>хувилбар, Пү 15</td></tr>
-<tr><td>Арлуудын гатлага, Turyol Эминөнү → Бүйүкада</td><td>08:40, 09:40, 10:40, 11:40 …; буцах 14:15, 15:15, 16:15, 17:00, 18:00</td><td>—</td><td class="n">≈ 150–200</td><td class="n">11–15 мян.</td><td>Ня 18, 09:40</td></tr>
+<tr><td data-label="Газар">Ая София, дээд галерейн жуулчны зам</td><td data-label="Ажиллах цаг (10 сар)">09:00–19:30 орчим, сүүлийн тасалбар 1 цагийн өмнө; мөргөлөөр завсарлана</td><td data-label="Хаалттай">Ба 12:00–14:30</td><td class="n" data-label="₺">1,270</td><td class="n" data-label="₮">93,000</td><td data-label="Манай өдөр">Лх 14, 09:00</td></tr>
+<tr><td data-label="Газар">Хөх сүм</td><td data-label="Ажиллах цаг (10 сар)">08:30–18:00, мөргөлөөр завсарлана</td><td data-label="Хаалттай">Ба 12:00–14:30</td><td class="n" data-label="₺">0</td><td class="n" data-label="₮">0</td><td data-label="Манай өдөр">Лх 14, 10:30</td></tr>
+<tr><td data-label="Газар">Цөөрөм (Basilica Cistern)</td><td data-label="Ажиллах цаг (10 сар)">09:00–19:00 (сүүлийн тасалбар 18:00); 19:30–22:00 "шөнийн" 3,000 ₺</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">1,950</td><td class="n" data-label="₮">142,000</td><td data-label="Манай өдөр">Лх 14, 11:30</td></tr>
+<tr><td data-label="Газар">Топкапы + Харем + Ая Ирине</td><td data-label="Ажиллах цаг (10 сар)">09:00–18:00, сүүлийн тасалбар 17:00, Харем 45 мин эрт хаана</td><td data-label="Хаалттай">Мягмар</td><td class="n" data-label="₺">2,750</td><td class="n" data-label="₮">200,000</td><td data-label="Манай өдөр">Пү 15, 09:00</td></tr>
+<tr><td data-label="Газар">Археологийн музей</td><td data-label="Ажиллах цаг (10 сар)">09:00–18:00, тасалбар 17:30 хүртэл; Паалантай павильон засварт</td><td data-label="Хаалттай">Даваа</td><td class="n" data-label="₺">760</td><td class="n" data-label="₮">55,000</td><td data-label="Манай өдөр">Пү 15, 14:30</td></tr>
+<tr><td data-label="Газар">Галата цамхаг</td><td data-label="Ажиллах цаг (10 сар)">08:30–23:00 (сүүлийн орох 22:00)</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">1,520</td><td class="n" data-label="₮">111,000</td><td data-label="Манай өдөр">Пү 15, 17:15</td></tr>
+<tr><td data-label="Газар">Hodjapasha дервишийн сема</td><td data-label="Ажиллах цаг (10 сар)">Өдөр бүр 19:00, хаалга 18:30, 60 мин</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">≈ 1,400–1,800</td><td class="n" data-label="₮">100–130 мян.</td><td data-label="Манай өдөр">Пү 15, 19:00</td></tr>
+<tr><td data-label="Газар">Босфорын богино тойрог, Şehir Hatları</td><td data-label="Ажиллах цаг (10 сар)">Эминөнү Boğaz Hattı хөлгөөс 14:30 (хөлөг дээр шалга), 2 цаг</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">340</td><td class="n" data-label="₮">25,000</td><td data-label="Манай өдөр">Ба 16, 14:30</td></tr>
+<tr><td data-label="Газар">Долмабахче ордон (Selamlık + Harem)</td><td data-label="Ажиллах цаг (10 сар)">09:00–17:00, тасалбар 16:00 хүртэл, ихэвчлэн эрт дуусдаг</td><td data-label="Хаалттай">Даваа</td><td class="n" data-label="₺">2,000–2,650</td><td class="n" data-label="₮">146–193 мян.</td><td data-label="Манай өдөр">Бя 17, 13:45</td></tr>
+<tr><td data-label="Газар">Cağaloğlu Hamamı, эмэгтэйчүүдийн хэсэг</td><td data-label="Ажиллах цаг (10 сар)">08:00–22:00 (захиалга заавал)</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">2,000–4,500</td><td class="n" data-label="₮">146–330 мян.</td><td data-label="Манай өдөр">Лх 14, 18:00</td></tr>
+<tr><td data-label="Газар">Их зах</td><td data-label="Ажиллах цаг (10 сар)">08:30–19:00</td><td data-label="Хаалттай">Ням</td><td class="n" data-label="₺">0</td><td class="n" data-label="₮">0</td><td data-label="Манай өдөр">Лх 14, Да 19</td></tr>
+<tr><td data-label="Газар">Амтлагчийн зах</td><td data-label="Ажиллах цаг (10 сар)">08:00–19:30, Ням 09:30–19:00</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">0</td><td class="n" data-label="₮">0</td><td data-label="Манай өдөр">Лх 14, Да 19</td></tr>
+<tr><td data-label="Газар">Хора (Kariye) сүм, мозайк</td><td data-label="Ажиллах цаг (10 сар)">09:00–18:00, мөргөлөөр завсарлана</td><td data-label="Хаалттай"><b>Баасан</b></td><td class="n" data-label="₺">≈ 1,150 (20 €)</td><td class="n" data-label="₮">84,000</td><td data-label="Манай өдөр">хувилбар, Пү 15</td></tr>
+<tr><td data-label="Газар">Арлуудын гатлага, Turyol Эминөнү → Бүйүкада</td><td data-label="Ажиллах цаг (10 сар)">08:40, 09:40, 10:40, 11:40 …; буцах 14:15, 15:15, 16:15, 17:00, 18:00</td><td data-label="Хаалттай">—</td><td class="n" data-label="₺">≈ 150–200</td><td class="n" data-label="₮">11–15 мян.</td><td data-label="Манай өдөр">Ня 18, 09:40</td></tr>
 </table></div>
 <p class="note">Museum Pass (105 €) Ая София галерей, Цөөрөм, Долмабахчег багтаадаггүй тул тасалбарыг хаалган дээрээс (эсвэл muze.gov.tr) авна. Онлайн "skip-the-line" борлуулагчид 2–3 дахин үнэтэй. Цагууд 2026 оны аравдугаар сарын байдлаар, гарахын өмнө Google Maps дээр нэг удаа шалга.</p>
 
@@ -312,16 +377,16 @@ a.lk{color:inherit;text-decoration:none;border-bottom:1.5px solid var(--turq)}a.
 
 <h2 id="budget">Төсөв: хүн бүрт, олон улсын жуулчны дундаж</h2>
 <p>Истанбулын 2026 оны зардлын гарын авлагууд "тав тухтай" аяллыг байргүйгээр өдөрт 100–130 € гэж тооцдог. Энэ хөтөлбөр 6 өдөрт яг тэр түвшинд: бүх 6 гол тасалбар, хамам, дервиш, Босфорын круиз, Michelin одтой орой, өдөр бүр сайн ресторан.</p>
-<div class="tbl"><table>
+<div class="tbl"><table class="t-budget">
 <tr><th>Зүйл</th><th class="n">₺</th><th class="n">€</th><th class="n">₮</th></tr>
-<tr><td>Тасалбар: Ая София, Цөөрөм, Топкапы, Археологи, Галата, Долмабахче</td><td class="n">10,150</td><td class="n">178</td><td class="n">741,000</td></tr>
-<tr><td>Хамам (Cağaloğlu) + дервишийн сема</td><td class="n">5,100</td><td class="n">89</td><td class="n">372,000</td></tr>
-<tr><td>Босфорын круиз, арлын гатлага ба минибус</td><td class="n">850</td><td class="n">15</td><td class="n">62,000</td></tr>
-<tr><td>Хотын тээвэр (трам, онгоц, автобус ≈ 25 уншилт) + 3–4 такси хуваалт + нисэх буудлын ван</td><td class="n">2,400</td><td class="n">42</td><td class="n">175,000</td></tr>
-<tr><td>Хоол 6 өдөр (өглөө 250, үдийн 500, орой 1,000 дундаж) + Neolokal</td><td class="n">15,000</td><td class="n">263</td><td class="n">1,095,000</td></tr>
-<tr><td>Кофе, цай, ус, амттан, жижиг зардал</td><td class="n">2,500</td><td class="n">44</td><td class="n">183,000</td></tr>
-<tr><td>Нөөц 7%</td><td class="n">2,500</td><td class="n">44</td><td class="n">183,000</td></tr>
-<tr class="total"><td>Нийт (бэлэг, худалдаа ороогүй)</td><td class="n">≈ 38,500</td><td class="n">≈ 675</td><td class="n">≈ 2.8 сая</td></tr>
+<tr><td data-label="Зүйл">Тасалбар: Ая София, Цөөрөм, Топкапы, Археологи, Галата, Долмабахче</td><td class="n" data-label="₺">10,150</td><td class="n" data-label="€">178</td><td class="n" data-label="₮">741,000</td></tr>
+<tr><td data-label="Зүйл">Хамам (Cağaloğlu) + дервишийн сема</td><td class="n" data-label="₺">5,100</td><td class="n" data-label="€">89</td><td class="n" data-label="₮">372,000</td></tr>
+<tr><td data-label="Зүйл">Босфорын круиз, арлын гатлага ба минибус</td><td class="n" data-label="₺">850</td><td class="n" data-label="€">15</td><td class="n" data-label="₮">62,000</td></tr>
+<tr><td data-label="Зүйл">Хотын тээвэр (трам, онгоц, автобус ≈ 25 уншилт) + 3–4 такси хуваалт + нисэх буудлын ван</td><td class="n" data-label="₺">2,400</td><td class="n" data-label="€">42</td><td class="n" data-label="₮">175,000</td></tr>
+<tr><td data-label="Зүйл">Хоол 6 өдөр (өглөө 250, үдийн 500, орой 1,000 дундаж) + Neolokal</td><td class="n" data-label="₺">15,000</td><td class="n" data-label="€">263</td><td class="n" data-label="₮">1,095,000</td></tr>
+<tr><td data-label="Зүйл">Кофе, цай, ус, амттан, жижиг зардал</td><td class="n" data-label="₺">2,500</td><td class="n" data-label="€">44</td><td class="n" data-label="₮">183,000</td></tr>
+<tr><td data-label="Зүйл">Нөөц 7%</td><td class="n" data-label="₺">2,500</td><td class="n" data-label="€">44</td><td class="n" data-label="₮">183,000</td></tr>
+<tr class="total"><td data-label="Зүйл">Нийт (бэлэг, худалдаа ороогүй)</td><td class="n" data-label="₺">≈ 38,500</td><td class="n" data-label="€">≈ 675</td><td class="n" data-label="₮">≈ 2.8 сая</td></tr>
 </table></div>
 <div class="two">
   <div class="call"><h3 style="margin-top:0">Хэмнэлттэй хувилбар (≈ 23,000 ₺, 1.7 сая ₮)</h3>
