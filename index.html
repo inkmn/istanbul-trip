@@ -35,6 +35,10 @@ button{font:inherit;cursor:pointer}
 .top h1{font-size:17px;font-weight:700}
 .top small{display:block;font-size:12px;opacity:.75;font-weight:500}
 .top .ib{background:rgba(255,255,255,.14);border:0;color:#fff;border-radius:10px;width:38px;height:38px;font-size:18px;margin-left:6px}
+.top>div:last-child{display:flex;align-items:center}
+.lseg{display:flex;background:rgba(255,255,255,.14);border-radius:10px;overflow:hidden}
+.lseg button{background:none;border:0;color:#fff;opacity:.6;font:700 12px/1 Inter,system-ui,sans-serif;padding:0 8px;height:38px;letter-spacing:.3px}
+.lseg button.on{opacity:1;background:rgba(255,255,255,.22)}
 /* sections */
 .view{display:none;animation:fade .2s}
 .view.on{display:block}
@@ -191,14 +195,14 @@ details .alt{font-size:13px;color:var(--mute);margin:0 0 10px}
 <body>
 <header class="top">
   <div><h1 id="topTitle">Истанбул 8</h1><small id="topSub">2026.10.13–19 · Истанбул + Каппадоки</small></div>
-  <div><button class="ib" id="themeBtn" title="Харанхуй/гэрэл">◐</button></div>
+  <div><div class="lseg" id="langSeg"><button data-l="mn">MN</button><button data-l="en">EN</button><button data-l="tr">TR</button></div><button class="ib" id="themeBtn" title="◐">◐</button></div>
 </header>
 
 <main>
   <section id="v-home" class="view on"><div class="wrap" id="c-home"></div></section>
   <section id="v-days" class="view"><div class="chips" id="dayChips"></div><div class="wrap" id="c-day"></div></section>
   <section id="v-places" class="view"><div class="chips" id="catChips"></div><div class="wrap"><input class="search" id="q" placeholder="Хайх: Ая София, kumpir, трам…"><div class="grid" id="c-places"></div></div></section>
-  <section id="v-map" class="view"><div class="chips" id="mapChips"></div><div id="mapEl"></div><div class="wrap sub" style="padding:8px 16px">📍 тэмдэг дарж дэлгэрэнгүй. ⌖ товч: миний байршил.</div></section>
+  <section id="v-map" class="view"><div class="chips" id="mapChips"></div><div id="mapEl"></div><div class="wrap sub" style="padding:8px 16px" id="mapHint">📍 тэмдэг дарж дэлгэрэнгүй. ⌖ товч: миний байршил.</div></section>
   <section id="v-more" class="view"><div class="wrap" id="c-more"></div></section>
 </main>
 
@@ -215,7 +219,10 @@ details .alt{font-size:13px;color:var(--mute);margin:0 0 10px}
 <div class="lb" id="lb"><img id="lbImg" alt=""><div class="c" id="lbCap"></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<script src="data.js"></script>
+<script>
+(function(){var q=new URLSearchParams(location.search).get("lang"),l=q;try{l=l||localStorage.getItem("lang")}catch(e){}if(!/^(mn|en|tr)$/.test(l||""))l="mn";if(q===l)try{localStorage.setItem("lang",l)}catch(e){}window.LANG=l;document.documentElement.lang=l;document.write('<script src="data.'+l+'.js"><\/script>');})();
+</script>
+<script src="ui.js"></script>
 <script src="credits.js"></script>
 <script src="app.js"></script>
 </body>
