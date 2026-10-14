@@ -85,12 +85,12 @@ function renderHome(){
   <div class="count"><div><b>${dd}</b><span>${T.days_}</span></div><div><b>${hh}</b><span>${T.hrs}</span></div><div><b>${mm}</b><span>${T.mins}</span></div><div style="background:var(--teal)"><b>✈️</b><span>${T.flight}</span></div></div>
   ${todayHtml}
   <div class="card"><h2>${T.weather} <span class="sub" id="wxSrc" style="font-weight:400;font-size:12px">${T.wxStatic}</span></h2><div class="wx" id="wx">${wxGrid(TRIP.weatherStatic,today)}</div>
-    <div class="sub" style="font-size:12px;margin-top:6px">${T.wxNote} <span id="dawn">${T.dawn}</span></div>
+    <div class="sub" style="font-size:12px;margin-top:6px">${T.wxNote}</div>
     <div class="warn" style="margin-top:10px">${T.wxWarn}</div></div>
   <div class="card"><h2>${T.fx} <span class="sub" id="fxSrc" style="font-weight:400;font-size:12px">${T.fxStatic}</span></h2>
     <div class="stats"><div class="stat"><b id="fx1">${fx.try_mnt}</b><span>₮ / 1 ₺</span></div><div class="stat"><b id="fx2">${fx.eur_try}</b><span>₺ / 1 €</span></div><div class="stat"><b id="fx3">${fx.usd_try}</b><span>₺ / 1 $</span></div></div>
     <div class="sub" style="margin-top:8px">${T.fxNote}</div></div>
-  <div class="card"><h2>${T.summary}</h2><div class="stats"><div class="stat"><b>4 + 2</b><span>${T.s1}</span></div><div class="stat"><b>${PLACES.length}</b><span>${T.s2}</span></div><div class="stat"><b>≈75k ₺</b><span>${T.s3}</span></div></div>
+  <div class="card"><h2>${T.summary}</h2><div class="stats"><div class="stat"><b>7</b><span>${T.s1}</span></div><div class="stat"><b>${PLACES.length}</b><span>${T.s2}</span></div><div class="stat"><b>≈39k ₺</b><span>${T.s3}</span></div></div>
     <div class="sub" style="margin-top:8px">${T.sumNote}</div></div>
   <div class="card"><h2>${T.quick}</h2><div class="btns">
     <a class="btn" href="${gm('Yusuf Aşkın Sokak 16 Küçük Ayasofya Fatih')}" target="_blank" rel="noopener">${T.toHotel}</a>
@@ -104,13 +104,10 @@ function renderHome(){
 function wxGrid(arr,today){ return arr.map(w=>{ const d=new Date(w.d+'T12:00:00'); return `<div class="${w.d===today?'today':''}" style="${w.loc?'background:#fbf1dc':''}"><div class="d">${DOW[d.getDay()]} ${d.getDate()}</div><div class="i">${wxIcon(w)}</div><div class="t">${w.hi}°<span style="color:var(--mute)">/${w.lo}°</span></div><div class="p">${w.p}% ${w.mm}${T.mmu}</div><div class="p">💨${w.wind}</div></div>`; }).join(''); }
 async function liveWeather(){
   try{
-    const u=(la,lo,h)=>`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max${h?'&hourly=wind_speed_10m':''}&timezone=Europe%2FIstanbul&start_date=2026-10-13&end_date=2026-10-19`;
-    const [ji,jo]=await Promise.all([fetch(u(41.0082,28.9784)).then(r=>r.json()),fetch(u(38.623,34.865,1)).then(r=>r.json())]);
-    const mk=(j,i,loc)=>({d:j.daily.time[i],hi:Math.round(j.daily.temperature_2m_max[i]),lo:Math.round(j.daily.temperature_2m_min[i]),p:j.daily.precipitation_probability_max[i]??0,mm:Math.round(j.daily.precipitation_sum[i]),wind:Math.round(j.daily.wind_speed_10m_max[i]),loc});
-    const arr=ji.daily.time.map((t,i)=> (t==='2026-10-16'||t==='2026-10-17') ? mk(jo,i,(TRIP.weatherStatic.find(x=>x.d===t)||{}).loc||'Ortahisar') : mk(ji,i));
+    const u=`https://api.open-meteo.com/v1/forecast?latitude=41.0082&longitude=28.9784&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&timezone=Europe%2FIstanbul&start_date=2026-10-13&end_date=2026-10-19`;
+    const j=await fetch(u).then(r=>r.json());
+    const arr=j.daily.time.map((t,i)=>({d:t,hi:Math.round(j.daily.temperature_2m_max[i]),lo:Math.round(j.daily.temperature_2m_min[i]),p:j.daily.precipitation_probability_max[i]??0,mm:Math.round(j.daily.precipitation_sum[i]),wind:Math.round(j.daily.wind_speed_10m_max[i])}));
     if(arr.length&&$('#wx')){ $('#wx').innerHTML=wxGrid(arr,istDate()); $('#wxSrc').textContent=T.wxLive; TRIP.weatherLive=arr; }
-    if(jo.hourly&&$('#dawn')){ const dawn=d=>{ const v=jo.hourly.time.map((t,i)=>[t,jo.hourly.wind_speed_10m[i]]).filter(x=>x[0].startsWith(d)&&+x[0].slice(11,13)>=5&&+x[0].slice(11,13)<=8).map(x=>x[1]); return v.length?Math.round(Math.max(...v)):null; };
-      const f=dawn('2026-10-16'), sa=dawn('2026-10-17'); if(f!==null) $('#dawn').textContent=T.dawnLive(f,sa); }
   }catch(e){}
 }
 async function liveFx(){
@@ -147,7 +144,7 @@ function renderDay(id){
 
 /* ---------- PLACES ---------- */
 let catF='all';
-function renderCatChips(){ const cats=['all','capp',...Object.keys(CAT)]; $('#catChips').innerHTML=cats.map(c=>`<button class="chip ${c===catF?'on':''}" data-c="${c}">${c==='all'?T.all:c==='capp'?'🎈 '+T.capp:CAT[c][0]+' '+CAT[c][1]}</button>`).join(''); $$('#catChips .chip').forEach(b=>b.onclick=()=>{catF=b.dataset.c; renderCatChips(); renderPlaces();}); }
+function renderCatChips(){ const cats=['all',...Object.keys(CAT)]; $('#catChips').innerHTML=cats.map(c=>`<button class="chip ${c===catF?'on':''}" data-c="${c}">${c==='all'?T.all:c==='capp'?'🎈 '+T.capp:CAT[c][0]+' '+CAT[c][1]}</button>`).join(''); $$('#catChips .chip').forEach(b=>b.onclick=()=>{catF=b.dataset.c; renderCatChips(); renderPlaces();}); }
 function renderPlaces(){
   const q=($('#q').value||'').toLowerCase();
   const list=PLACES.filter(p=>(catF==='all'||(catF==='capp'?p.reg==='capp':p.cat===catF))&&(!q||(p.name+' '+p.tr+' '+p.desc).toLowerCase().includes(q)));
@@ -168,7 +165,7 @@ function initMap(){
   L.marker([TRIP.hotel.lat,TRIP.hotel.lng],{icon:L.divIcon({className:'',html:'<div class="mk" style="background:#b23a48;width:36px;height:36px"><span>🏨</span></div>',iconSize:[36,36],iconAnchor:[18,36]}),zIndexOffset:1000}).addTo(map).bindPopup(`<b>${T.hotel}</b><br>Yusuf Aşkın Sk. 16`);
   const Me=L.Control.extend({onAdd(){ const b=L.DomUtil.create('button'); b.innerHTML='⌖'; b.style.cssText='width:34px;height:34px;font-size:20px;background:#fff;border:2px solid rgba(0,0,0,.2);border-radius:4px;cursor:pointer'; b.onclick=()=>navigator.geolocation&&navigator.geolocation.getCurrentPosition(pos=>{ const ll=[pos.coords.latitude,pos.coords.longitude]; if(meMarker) meMarker.setLatLng(ll); else meMarker=L.circleMarker(ll,{radius:9,color:'#fff',weight:3,fillColor:'#1a73e8',fillOpacity:1}).addTo(map).bindPopup(T.youHere); map.setView(ll,15); },()=>alert(T.noGeo)); return b; }});
   new Me({position:'topright'}).addTo(map);
-  $('#mapChips').innerHTML=`<button class="chip on" data-md="all">${T.istanbul}</button><button class="chip" data-md="capp">🎈 ${T.capp}</button>`+DAYS.map(d=>`<button class="chip" data-md="${d.id}">${d.dow} ${d.date.slice(8)}</button>`).join('');
+  $('#mapChips').innerHTML=`<button class="chip on" data-md="all">${T.istanbul}</button>`+DAYS.map(d=>`<button class="chip" data-md="${d.id}">${d.dow} ${d.date.slice(8)}</button>`).join('');
   $$('#mapChips .chip').forEach(b=>b.onclick=()=>setMapDay(b.dataset.md));
   setTimeout(()=>{map.invalidateSize(); setMapDay('all');},100);
 }
@@ -185,17 +182,18 @@ function setMapDay(id){
 
 /* ---------- MORE ---------- */
 const BUDGET=[
-  ["Истанбулын тасалбар",[["Ая София (галерей)",1270,1],["Цөөрөм",1950,1],["Топкапы + Харем",2750,1],["Долмабахче",2650,1],["Cağaloğlu хамам",3500,1],["Дервишийн сема",1600,1],["Босфорын тойрог",340,1],["Галата цамхаг (Ня орой, хүсвэл)",1520,0],["Хора сүм (Лх, хүсвэл)",1400,0],["Hürrem Sultan тансаг хамам (оронд нь)",3000,0]]],
-  ["Каппадоки",[["Нислэг TK IST→NAV→IST",9500,1],["Агуйн буудал 2 шөнө (2 хүний өрөө хуваалт)",8500,1],["Агаарын бөмбөлөг, стандарт 60 мин",12500,1],["Дээд зэргийн бөмбөлөг нэмэлт (Royal/Butterfly)",6000,0],["Хувийн ван + хөтөч Ба (8-д хуваалт)",3200,1],["Гөреме музей + Karanlık Kilise",1480,1],["Цайз, музей, Панжарлык",350,1],["NAV нисэх буудлын ван ×2",800,1],["Нар жаргах жийп сафари (хүсвэл)",2000,0]]],
-  ["Хоол",[["Мя: Balıkçı Sabahattin",1400,1],["Лх: Köftecisi + Neolokal",4300,1],["Пү: Konyalı + Tandır",1300,1],["Ба: Аванос + Ziggy's",1700,1],["Бя: Ортахисар + Matbah",1500,1],["Ня: kumpir + Hamdi",1450,1],["Да: өглөөний цай, хөнгөн хоол",500,1],["Өглөөний цай, зууш, цай/кофе, ус",2500,1]]],
-  ["Тээвэр",[["Havaist IST→Aksaray (ирэх)",310,1],["Истанбулкарт (трам, автобус, онгоц ≈ 18 уншилт)",1000,1],["IST такси Пү + Бя (хуваалт)",650,1],["Такси хуваах (орой, бороо)",600,1],["Ван буудал→IST Да (хүнд)",440,1]]],
-  ["Бусад",[["Бэлэг, lokum, баклава",2500,1],["Худалдаа (хувцас, керамик, …)",5000,0],["Нөөц ≈ 6%",4500,1]]]
+  ["Истанбулын тасалбар",[["Ая София (галерей)",1270,1],["Цөөрөм",1950,1],["Топкапы + Харем",2750,1],["Археологийн музей",760,1],["Долмабахче",2650,1],["Cağaloğlu хамам",3500,1],["Дервишийн сема",1600,1],["Галата цамхаг (Бя, хүсвэл)",1520,0],["Хора сүм (хүсвэл)",1150,0],["Hürrem Sultan тансаг хамам (оронд нь)",5000,0]]],
+  ["Азийн тал, арал",[["Бейлербейи ордон",800,1],["Истанбул Модерн",900,1],["Пера музей",300,1],["Çamlıca цамхаг (хүсвэл)",900,0],["Охидын цамхаг руу завь (хүсвэл)",1620,0],["Kılıç Ali Paşa хамам (хүсвэл)",3500,0],["Бүйүкада гатлага ×2",350,1],["Арлын цахилгаан минибус",150,1],["Кадыкөй, Үскүдар хөлөг ×4",240,1]]],
+  ["Хоол",[["Мя: Balıkçı Sabahattin",1400,1],["Лх: Köftecisi + Neolokal",4300,1],["Пү: Konyalı + Çiya",1200,1],["Ба: Ченгелкөй + Kanaat",1000,1],["Бя: Karaköy Lokantası + Matbah",1500,1],["Ня: арлын загас + Hamdi",2000,1],["Да: өглөөний цай, хөнгөн хоол",500,1],["Өглөөний цай, зууш, цай/кофе, ус",2500,1]]],
+  ["Тээвэр",[["Havaist IST→Aksaray (ирэх)",310,1],["Истанбулкарт (трам, автобус, хөлөг ≈ 20 уншилт)",1000,1],["Такси хуваах (Чамлыжа, орой, бороо)",700,1],["Ван буудал→IST Да (хүнд)",440,1]]],
+  ["Бусад",[["Бэлэг, lokum, баклава",2500,1],["Худалдаа (хувцас, керамик, …)",5000,0],["Нөөц ≈ 6%",2300,1]]]
 ];
 function renderMore(){
   const b=k=>{ const s=localStorage.getItem('b_'+k); return s===null?null:s==='1'; };
   const bud=BUDGET.map(([g,items],gi)=>`<h3>${esc(T.budget[gi][0])}</h3>${items.map(([n,v,def],ii)=>{const k=gi+'_'+ii; const on=b(k)??!!def; return `<div class="item"><input type="checkbox" data-bk="${k}" data-v="${v}" ${on?'checked':''}><span class="nm">${esc(T.budget[gi][1][ii]||n)}</span><span class="v">${money(v)}</span></div>`;}).join('')}`).join('');
   $('#c-more').innerHTML=`
   ${acc(T.accFood, FOOD.map(f=>`<div class="row"><img src="${IMG(f.img)}" alt="" loading="lazy" data-lb="${f.img}"><div><div class="n">${esc(f.n)} <span class="pill">${esc(f.p)}</span></div><div class="d">${esc(f.d)}</div></div></div>`).join(''), true)}
+  ${acc(T.accRest, `<div class="sub">${T.restIntro}</div>`+Object.entries(T.restCat).map(([c,h])=>`<h3>${h}</h3>`+RESTO.filter(r=>r.c===c).map(r=>`<div class="row"><div><div class="n"><a href="${gm(r.q)}" target="_blank" rel="noopener">${esc(r.n)}</a> <span class="pill">${esc(r.p)}</span>${r.day?` <span class="pill gold">${esc(r.day)}</span>`:''}</div><div class="d"><i>${esc(r.a)}</i> · ${r.d}${r.u?` <a href="${r.u}" target="_blank" rel="noopener">↗</a>`:''}</div></div></div>`).join('')).join('')+T.restTips)}
   ${acc(T.accTr, T.transport)}
   ${acc(T.accBud, `<div class="seg" id="curSeg"><button data-cur="try" class="${cur==='try'?'on':''}">${T.cur[0]}</button><button data-cur="eur" class="${cur==='eur'?'on':''}">${T.cur[1]}</button><button data-cur="mnt" class="${cur==='mnt'?'on':''}">${T.cur[2]}</button></div><div class="bud" id="bud">${bud}<div class="tot"><span>${T.total}</span><span id="budTot"></span></div><div class="sub" id="budAll"></div></div><div class="sub" style="margin-top:8px">${T.budNote}</div>`)}
   ${acc(T.accCk, Object.entries(CHECKS).map(([g,items],gi)=>`<h3>${esc(g)}</h3>${items.map((t,i)=>{const k='c_'+gi+'_'+i; const on=localStorage.getItem(k)==='1'; return `<div class="ck ${on?'done':''}"><input type="checkbox" id="${k}" data-ck="${k}" ${on?'checked':''}><label for="${k}">${esc(t)}</label></div>`;}).join('')}`).join(''))}
